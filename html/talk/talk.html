@@ -1,0 +1,17 @@
+<html>
+	<header><title>talk server</title></header>
+	<body>
+		{% for (id, mesg, date, ip) in data %}
+		<ul>{{id}}:{{mesg}} ({{date}})({{ip}})</ul>
+		{% end %}
+		<form method='post' action='/talk'>
+			<input type='hidden' value='{{userdata}}' name='user'>:
+			<input type='text' name='mesg'>
+			<input type='submit' value='send'></br>
+			<input type='hidden' name='time' value='{{time}}'>
+			<br><hr><br>
+			<input type='hidden' name='logout_time' value='{{time}}'>
+		</form>
+	</body>
+</html>
+
