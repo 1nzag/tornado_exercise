@@ -1,7 +1,8 @@
 from tornado.ioloop import IOLoop
 from tornado.web import RequestHandler, Application, url
 import datetime
-userdata = {}
+import pickle
+userdata = { "admin":"adminhahahaha"}
 data = []
 
 
@@ -59,9 +60,12 @@ class LoginProcessHandler(RequestHandler):
 
         if success_flag == 0:
             self.render("html/login/login_process.html", output_mesg = output_mesg)
-
+        
+        if id_ == 'admin':
+            self.render("html/login/login_admin.html")
+            
         else:
-            self.render("html/login/login_success.html", output_mesg = output_mesg)
+            self.render("html/login/login_success.html", output_mesg = output_mesg, id = id_)
 
 class TalkHandler(RequestHandler):
     def post(self):
@@ -69,12 +73,40 @@ class TalkHandler(RequestHandler):
         mesg = self.get_body_argument('mesg')
         dt = datetime.datetime.now()
         date = dt.strftime("%A %B %d %H:%M:%S %Y")
-        ip = self.remote_ip()
+        ip = self.request.remote_ip
         userdata = user
         if mesg != "":
-            data.append((user,mesg, data, ip))
-        self.render("/html/talk/talk.html", data = data, time = date, userdata = user)
+            data.append((user,mesg, date, ip))
+        self.render("html/talk/talk.html", data = data, time = date, userdata = user)
 
+
+class AdminHandler(RequestHandler):
+    def post(self):
+        cmd = ""
+        cmd = self.get_body_argument('cmd')
+        flag = 0
+        if cmd == "dump":
+            f = open("dump.hist", "wb")
+            pickle.dump(data, f)
+            f.close()
+        elif cmd == "load":
+            tmp_data = pickle.load(open("dump.hist", "rb"))
+            flag = 1
+        if flag == 0:
+            self.render("html/talk/admin.html", alldata = data)
+        else:
+            self.render("html/talk/admin.html", alldata = tmp_data)
+
+
+class LogoutHandler(RequestHandler):
+    def post(self):
+        dt = datetime.datetime.now()
+        date = dt.strftime("%A %B %d %H:%M:%S %Y")
+        ip = self.request.remote_ip
+        user=self.get_body_argument('user')
+        
+        data.append((user, "loggouted", date, ip))
+        self.render("html/talk/logout.html")
 
 def make_app():
     handler_list = []
@@ -82,6 +114,9 @@ def make_app():
     handler_list.append((r"/register", RegisterPageHandler))
     handler_list.append((r"/register_process", RegisterHandler))
     handler_list.append((r"/login_process", LoginProcessHandler))
+    handler_list.append((r"/talk", TalkHandler))
+    handler_list.append((r"/asfdasfqwecaxsdfargqwdcsadfasf", AdminHandler))
+    handler_list.append((r"/logout", LogoutHandler))
     return Application(handler_list)
 
 if __name__ == '__main__':

@@ -1,0 +1,14 @@
+<html>
+	<header><title>admin page</title></header>
+	<body>
+		{% for (id, mesg, date, ip) in alldata %}
+		<ul>{{id}}:{{mesg}} ({{date}})({{ip}})</ul>
+		{% end %}
+		<form method='post' action='/asfdasfqwecaxsdfargqwdcsadfasf'>
+			Action: 
+			<input type='text' name='cmd'>
+			<input type='submit' value='command'>
+		</form>
+		<a href='/'>Return to Main page<a>
+	</body>
+</html>

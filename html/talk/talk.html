@@ -9,8 +9,12 @@
 			<input type='text' name='mesg'>
 			<input type='submit' value='send'></br>
 			<input type='hidden' name='time' value='{{time}}'>
+		</form>
 			<br><hr><br>
+		<form method='post' action='/logout'>
+			<input type = 'hidden' name='user' value='{{userdata}}'>
 			<input type='hidden' name='logout_time' value='{{time}}'>
+			<input type='submit' value='logout'>
 		</form>
 	</body>
 </html>
